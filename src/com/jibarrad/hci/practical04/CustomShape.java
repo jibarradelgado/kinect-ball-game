@@ -131,11 +131,32 @@ public class CustomShape {
 	// and return true (which will lead to the removal of this CustomShape object)
 	boolean done() {
 		Vec2 posScreen = p.box2d.getBodyPixelCoord(body);
-		boolean offscreen = posScreen.y > p.height;
+		
+		if (posScreen.y > p.height - 325) {
+			body.m_linearVelocity.y = -(body.m_linearVelocity.y);
+		} 
+		
+		if (posScreen.y > 100) {
+			body.m_linearVelocity.x *= 1.09f;
+		}
+		
+		boolean offscreen = false;
+		
+		if (posScreen.x < 0 || posScreen.x > p.width) {
+			if (posScreen.x < 0) {
+				p.setScoreRight(p.getScoreRight() + 1);
+			}
+			if (posScreen.x > p.width) {
+				p.setScoreLeft(p.getScoreLeft() + 1);
+			}
+			offscreen = true;
+		}
+		
 		if (offscreen) {
 			p.box2d.destroyBody(body);
 			return true;
 		}
+		
 		return false;
 	}
 	

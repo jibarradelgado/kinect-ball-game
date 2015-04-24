@@ -1,25 +1,18 @@
 package com.jibarrad.hci.practical04;
 
-//import libraries
 import java.util.ArrayList;
 import java.util.Random;
 
 import processing.core.*; //Processing core
-import processing.opengl.*; // opengl
 import SimpleOpenNI.*; // kinect
 import blobDetection.*; // blobs
 import shiffman.box2d.Box2DProcessing;
-import toxi.geom.*; // toxiclibs shapes and vectors
 import toxi.processing.*; // toxiclibs display
-
-import org.jbox2d.*; // shiffman's jbox2d helper library
-import org.jbox2d.collision.shapes.*; // jbox2d
-import org.jbox2d.common.*; // jbox2d
-import org.jbox2d.dynamics.*; // jbox2d
 
 public class Example2 extends PApplet {
 	
-	private static final float BLOB_THRESHOLD = (float) 0.2;
+	private static final float BLOB_THRESHOLD = 0.02f;
+	private static final float GRAVITY_Y = -70f;
 	// declare SimpleOpenNI object
 	SimpleOpenNI context;
 	// declare BlobDetection object
@@ -37,10 +30,11 @@ public class Example2 extends PApplet {
 	// to center and rescale from 640x480 to higher custom resolutions
 	float reScale;
 
-	// background and blob color
+	// background, blob color and fillColor
 	int bgColor; 
 	int blobColor;
-	// three color palettes (artifact from me storing many interesting color palettes as strings in an external data file ;-)
+	int fillColor;
+	// three color palettes
 	String[] palettes = {
 	"-1117720,-13683658,-8410437,-9998215,-1849945,-5517090,-4250587,-14178341,-5804972,-3498634",
 	"-67879,-9633503,-8858441,-144382,-4996094,-16604779,-588031",
@@ -48,8 +42,11 @@ public class Example2 extends PApplet {
 	};
 	
 	int [] colorPalette;
-	
 	int [] userMap;
+	
+	private int scoreLeft = 0;
+	private int scoreRight = 0;
+	PFont f;
 
 	// the main Box2D object in which all the physics-based stuff is happening
 	Box2DProcessing box2d;
@@ -59,6 +56,8 @@ public class Example2 extends PApplet {
 	Random random = new Random(); 
 
 	public void setup() {
+		
+		f = createFont("Helvetica",16,true); 
 		// it's possible to customize this, for example 1920x1080
 		size(1280, 720, OPENGL);
 		context = new SimpleOpenNI(this);
@@ -90,7 +89,7 @@ public class Example2 extends PApplet {
 			// setup box2d, create world, set gravity
 			box2d = new Box2DProcessing(this);
 			box2d.createWorld();
-			box2d.setGravity(0, (float)(-9.8));
+			box2d.setGravity(0, (float)(GRAVITY_Y));
 			// set random colors (background, blob)
 			setRandomColors(1);
 		}
@@ -126,7 +125,7 @@ public class Example2 extends PApplet {
 			// copy the image into the smaller blob image
 			blobs.copy(cam, 0, 0, cam.width, cam.height, 0, 0, blobs.width, blobs.height);
 			// blur the blob image
-			blobs.filter(BLUR, 1);
+			blobs.filter(BLUR,1);
 			// detect the blobs
 			theBlobDetection.computeBlobs(blobs.pixels);
 			// initialize a new polygon
@@ -141,14 +140,15 @@ public class Example2 extends PApplet {
 			poly.destroyBody();
 			// set the colors randomly every 240th frame
 			setRandomColors(240);
+			showScore();
 		}
 	}
 
 	private void updateAndDrawBox2D() {
 		// if frameRate is sufficient, add a polygon and a circle with a random radius
-		if (frameRate > 29) {
+		if (polygons.isEmpty()) {
 			//polygons.add(new CustomShape(this, kinectWidth/2, -50, -1));
-			polygons.add(new CustomShape(this, kinectWidth/2, -50, generateRandom(2, 19)));
+			polygons.add(new CustomShape(this, kinectWidth/2, -20, 20));
 		}
 		// take one step in the box2d physics world
 		box2d.step();
@@ -177,7 +177,11 @@ public class Example2 extends PApplet {
 		}
 	}
 
-	// sets the colors every nth frame
+	
+	/**
+	 * sets the colors every nth frame
+	 * @param nthFrame
+	 */
 	public void setRandomColors(int nthFrame) {
 		if (frameCount % nthFrame == 0) {
 			// turn a palette into a series of strings
@@ -191,6 +195,8 @@ public class Example2 extends PApplet {
 			bgColor = colorPalette[0];
 			// set blob color to second color from palette
 			blobColor = colorPalette[1];
+			// set fill Color; 
+			fillColor = colorPalette[2];
 			// set all shape colors randomly
 			for (CustomShape cs: polygons) { cs.col = getRandomColor(); }
 		}
@@ -210,5 +216,29 @@ public class Example2 extends PApplet {
 	public int generateRandom(int Min, int Max) {
 		int result = random.nextInt(Max - Min) + Min;
 		return result;
+	}
+	
+
+	public void showScore() {
+		textFont(f,16);       
+		fill(fillColor);
+		text("Left: " + getScoreLeft() , 10, 100);
+		text("Right: " + getScoreRight(), kinectWidth - 100, 100);
+	}
+
+	int getScoreLeft() {
+		return scoreLeft;
+	}
+
+	void setScoreLeft(int scoreLeft) {
+		this.scoreLeft = scoreLeft;
+	}
+
+	int getScoreRight() {
+		return scoreRight;
+	}
+
+	void setScoreRight(int scoreRight) {
+		this.scoreRight = scoreRight;
 	}
 }

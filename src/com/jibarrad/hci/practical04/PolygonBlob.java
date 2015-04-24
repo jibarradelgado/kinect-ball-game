@@ -23,8 +23,6 @@ public class PolygonBlob extends Polygon2D {
 		this.p = p;
 	}
 
-	// the createPolygon() method is nearly identical to the one presented earlier
-	  // see the Kinect Flow Example for a more detailed description of this method (again, feel free to improve it)
 	public void createPolygon() {
 		ArrayList<ArrayList<PVector>> contours = new ArrayList<ArrayList<PVector>>();
 		int selectedContour = 0;
@@ -41,7 +39,6 @@ public class PolygonBlob extends Polygon2D {
 					if (eA != null && eB != null) {
 						EdgeVertex fn = b.getEdgeVertexA((m+1) % b.getEdgeNb());
 						EdgeVertex fp = b.getEdgeVertexA((Math.max(0, m-1)));
-						//dist(x1,y1,x2,y2) translated into Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
 						float dn = (float) Math.sqrt((fn.x*p.kinectWidth-eA.x*p.kinectWidth)
 								*(fn.x*p.kinectWidth-eA.x*p.kinectWidth) 
 								+(fn.y*p.kinectHeight-eA.y*p.kinectHeight)
@@ -50,8 +47,6 @@ public class PolygonBlob extends Polygon2D {
 								*(fp.x*p.kinectWidth-eA.x*p.kinectWidth) 
 								+(fp.y*p.kinectHeight-eA.y*p.kinectHeight)
 								*(fp.y*p.kinectHeight-eA.y*p.kinectHeight));
-						//float dn = dist(eA.x*p.kinectWidth, eA.y*p.kinectHeight, fn.x*p.kinectWidth, fn.y*p.kinectHeight);
-						//float dp = dist(eA.x*p.kinectWidth, eA.y*p.kinectHeight, fp.x*p.kinectWidth, fp.y*p.kinectHeight);
 						if (dn > 15 || dp > 15) {
 							if (contour.size() > 0) {
 								contour.add(new PVector(eB.x*p.kinectWidth, eB.y*p.kinectHeight));
@@ -127,16 +122,16 @@ public class PolygonBlob extends Polygon2D {
 		// if there are more than 0 points (aka a person on screen)...
 		if (getNumPoints() > 0) {
 			// create a vec2d array of vertices in box2d world coordinates from this polygon
-			Vec2[] verts = new Vec2[getNumPoints() / 8];
-			for (int i=0; i<getNumPoints() / 8; i++) {
-				Vec2D v = vertices.get(i * 8);
+			Vec2[] verts = new Vec2[getNumPoints() / 4];
+			for (int i=0; i<getNumPoints() / 4; i++) {
+				Vec2D v = vertices.get(i * 4);
 				verts[i] = p.box2d.coordPixelsToWorld(v.x, v.y);
 			}
 			// create a chain from the array of vertices
 			ChainShape chain = new ChainShape();
 			chain.createChain(verts, verts.length);
 			// create fixture in body from the chain (this makes it actually deflect other shapes)
-			body.createFixture(chain, 1);
+			body.createFixture(chain, 10);
 		}
 	}
 
