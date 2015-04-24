@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="CS5041-HCI-Pracitcal04"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SimpleOpenNI"/>
+	<classpathentry kind="lib" path="core.jar"/>
+	<classpathentry kind="lib" path="SimpleOpenNI.jar"/>
+	<classpathentry kind="lib" path="blobDetection.jar"/>
+	<classpathentry kind="lib" path="audioutils.jar"/>
+	<classpathentry kind="lib" path="colorutils.jar"/>
+	<classpathentry kind="lib" path="datautils.jar"/>
+	<classpathentry kind="lib" path="jbox2d-library-2.2.1-ds.jar"/>
+	<classpathentry kind="lib" path="simutils.jar"/>
+	<classpathentry kind="lib" path="toxiclibs_p5.jar"/>
+	<classpathentry kind="lib" path="toxiclibscore.jar"/>
+	<classpathentry kind="lib" path="verletphysics.jar"/>
+	<classpathentry kind="lib" path="volumeutils.jar"/>
+	<classpathentry kind="lib" path="box2d_processing.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="jogl-all.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-windows-i586.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-windows-i586.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
