@@ -9,10 +9,20 @@ import blobDetection.*; // blobs
 import shiffman.box2d.Box2DProcessing;
 import toxi.processing.*; // toxiclibs display
 
-public class Example2 extends PApplet {
+/**
+ * 
+ * @author Jorge
+ * @author Amnon Owed http://www.creativeapplications.net/processing/kinect-physics-tutorial-for-processing/
+ * @author Chloe http://www.chloechen.io/kinect-silhouette-and-kinect-stipple-cam-using-processing/
+ * 
+ */
+public class BallGame extends PApplet {
 	
 	private static final float BLOB_THRESHOLD = 0.02f;
 	private static final float GRAVITY_Y = -70f;
+	public static final int KINECT_WIDTH = 640;
+	public static final int KINECT_HEIGHT = 480;
+	
 	// declare SimpleOpenNI object
 	SimpleOpenNI context;
 	// declare BlobDetection object
@@ -24,14 +34,12 @@ public class Example2 extends PApplet {
 
 	// PImage to hold incoming imagery and smaller one for blob detection
 	PImage cam, blobs;
-	// the kinect's dimensions to be used later on for calculations
-	int kinectWidth = 640;
-	int kinectHeight = 480;
+
 	// to center and rescale from 640x480 to higher custom resolutions
 	float reScale;
 
 	// background, blob color and fillColor
-	int bgColor; 
+	int backgroundColor; 
 	int blobColor;
 	int fillColor;
 	// three color palettes
@@ -51,7 +59,7 @@ public class Example2 extends PApplet {
 	// the main Box2D object in which all the physics-based stuff is happening
 	Box2DProcessing box2d;
 	// list to hold all the custom shapes (circles, polygons)
-	ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
+	ArrayList<BallShape> polygons = new ArrayList<BallShape>();
 	
 	Random random = new Random(); 
 
@@ -77,10 +85,9 @@ public class Example2 extends PApplet {
 			// calculate the reScale value
 			// currently it's rescaled to fill the complete width (cuts of top-bottom)
 			// it's also possible to fill the complete height (leaves empty sides)
-			reScale = (float) width / kinectWidth;
+			reScale = (float) width / KINECT_WIDTH;
 			// create a smaller blob image for speed and efficiency
-			blobs = createImage(kinectWidth/3, kinectHeight/3, RGB);
-			//blobs = createImage(kinectWidth/3, kinectHeight/3, RGB);
+			blobs = createImage(KINECT_WIDTH/3, KINECT_HEIGHT/3, RGB);
 			// initialize blob detection object to the blob image dimensions
 			theBlobDetection = new BlobDetection(blobs.width, blobs.height);
 			theBlobDetection.setThreshold(BLOB_THRESHOLD);
@@ -96,13 +103,12 @@ public class Example2 extends PApplet {
 	}
 
 	public void draw() {
-		background(bgColor);
+		background(backgroundColor);
 		
-		cam = createImage(kinectWidth, kinectHeight, RGB);
+		cam = createImage(KINECT_WIDTH, KINECT_HEIGHT, RGB);
 		// update the SimpleOpenNI object
 		context.update();
 		
-		int[]depthValues= context.depthMap();
 		int[] userMap = null;
 		int userCount = context.getNumberOfUsers();
 		
@@ -148,13 +154,13 @@ public class Example2 extends PApplet {
 		// if frameRate is sufficient, add a polygon and a circle with a random radius
 		if (polygons.isEmpty()) {
 			//polygons.add(new CustomShape(this, kinectWidth/2, -50, -1));
-			polygons.add(new CustomShape(this, kinectWidth/2, -20, 20));
+			polygons.add(new BallShape(this, KINECT_WIDTH/2, -20, 20));
 		}
 		// take one step in the box2d physics world
 		box2d.step();
 
 		// center and reScale from Kinect to custom dimensions
-		translate(0, (height-kinectHeight*reScale)/2);
+		translate(0, (height-KINECT_HEIGHT*reScale)/2);
 		scale(reScale);
 
 		// display the person's polygon
@@ -165,14 +171,14 @@ public class Example2 extends PApplet {
 		// display all the shapes (circles, polygons)
 		// go backwards to allow removal of shapes
 		for (int i=polygons.size()-1; i>=0; i--) {
-			CustomShape cs = polygons.get(i);
+			BallShape ballShape = polygons.get(i);
 			// if the shape is off-screen remove it (see class for more info)
-			if (cs.done()) {
+			if (ballShape.ballRules()) {
 				polygons.remove(i);
 				// otherwise update (keep shape outside person) and display (circle or polygon)
 			} else {
-				cs.update();
-				cs.display();
+				ballShape.update();
+				ballShape.display();
 			}
 		}
 	}
@@ -192,13 +198,13 @@ public class Example2 extends PApplet {
 				colorPalette[i] = Integer.parseInt(paletteStrings[i]);
 			}
 			// set background color to first color from palette
-			bgColor = colorPalette[0];
+			backgroundColor = colorPalette[0];
 			// set blob color to second color from palette
 			blobColor = colorPalette[1];
 			// set fill Color; 
 			fillColor = colorPalette[2];
 			// set all shape colors randomly
-			for (CustomShape cs: polygons) { cs.col = getRandomColor(); }
+			for (BallShape cs: polygons) { cs.col = getRandomColor(); }
 		}
 	}
 	
@@ -223,7 +229,7 @@ public class Example2 extends PApplet {
 		textFont(f,16);       
 		fill(fillColor);
 		text("Left: " + getScoreLeft() , 10, 100);
-		text("Right: " + getScoreRight(), kinectWidth - 100, 100);
+		text("Right: " + getScoreRight(), KINECT_WIDTH - 100, 100);
 	}
 
 	int getScoreLeft() {

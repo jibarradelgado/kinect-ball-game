@@ -1,18 +1,19 @@
 package com.jibarrad.hci.practical04;
 
-import processing.core.*;
 import toxi.geom.*; // toxiclibs shapes and vectors
-import toxi.processing.*; // toxiclibs display
-import org.jbox2d.*; // shiffman's jbox2d helper library
 import org.jbox2d.collision.shapes.*; // jbox2d
 import org.jbox2d.common.*; // jbox2d
 import org.jbox2d.dynamics.*; // jbox2d
 
-import java.util.Random;
+/**
+ * 
+ * @author Jorge
+ * @author Amnon Owed http://www.creativeapplications.net/processing/kinect-physics-tutorial-for-processing/
+ *
+ */
+public class BallShape {
 
-public class CustomShape {
-
-	Example2 p;
+	BallGame p;
 	// usually one would probably make a generic Shape class and subclass different types (circle, polygon), but that
 	// would mean at least 3 instead of 1 class, so for this tutorial it's a combi-class CustomShape for all types of shapes
 	// to save some space and keep the code as concise as possible I took a few shortcuts to prevent repeating the same code
@@ -25,7 +26,7 @@ public class CustomShape {
 	// radius (also used to distinguish between circles and polygons in this combi-class
 	float r;
 
-	public CustomShape(Example2 p,float x, float y, float r) {
+	public BallShape(BallGame p,float x, float y, float r) {
 		this.p = p;
 		this.r = r;
 		// create a body (polygon or circle based on the r)
@@ -127,21 +128,27 @@ public class CustomShape {
 		p.popMatrix();
 	}
 
-	// if the shape moves off-screen, destroy the box2d body (important!)
-	// and return true (which will lead to the removal of this CustomShape object)
-	boolean done() {
+	/**
+	 * 
+	 * @return true if the ball is offscreen. 
+	 */
+	boolean ballRules() {
 		Vec2 posScreen = p.box2d.getBodyPixelCoord(body);
 		
+		//Bouncing the ball at a low point of the screen
 		if (posScreen.y > p.height - 325) {
 			body.m_linearVelocity.y = -(body.m_linearVelocity.y);
 		} 
 		
+		//At certain point of the ceiling the ball
+		//will start accelerating
 		if (posScreen.y > 100) {
 			body.m_linearVelocity.x *= 1.09f;
 		}
 		
 		boolean offscreen = false;
 		
+		//Determine the scores when the ball goes to an extreme x position
 		if (posScreen.x < 0 || posScreen.x > p.width) {
 			if (posScreen.x < 0) {
 				p.setScoreRight(p.getScoreRight() + 1);

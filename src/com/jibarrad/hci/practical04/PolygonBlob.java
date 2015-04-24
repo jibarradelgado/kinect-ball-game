@@ -11,15 +11,19 @@ import org.jbox2d.collision.shapes.*; // jbox2d
 import org.jbox2d.common.*; // jbox2d
 import org.jbox2d.dynamics.*; // jbox2d
 
-//an extended polygon class quite similar to the earlier PolygonBlob class (but extending Toxiclibs' Polygon2D class instead)
-//The main difference is that this one is able to create (and destroy) a box2d body from it's own shape
+/**
+ * 
+ * @author Jorge
+ * @author Amnon Owed http://www.creativeapplications.net/processing/kinect-physics-tutorial-for-processing/
+ * 
+ */
 public class PolygonBlob extends Polygon2D {
 	//to hold the box2d body
 	Body body;
 	
-	Example2 p;
+	BallGame p;
 	
-	public PolygonBlob(Example2 p) {
+	public PolygonBlob(BallGame p) {
 		this.p = p;
 	}
 
@@ -39,24 +43,24 @@ public class PolygonBlob extends Polygon2D {
 					if (eA != null && eB != null) {
 						EdgeVertex fn = b.getEdgeVertexA((m+1) % b.getEdgeNb());
 						EdgeVertex fp = b.getEdgeVertexA((Math.max(0, m-1)));
-						float dn = (float) Math.sqrt((fn.x*p.kinectWidth-eA.x*p.kinectWidth)
-								*(fn.x*p.kinectWidth-eA.x*p.kinectWidth) 
-								+(fn.y*p.kinectHeight-eA.y*p.kinectHeight)
-								*(fn.y*p.kinectHeight-eA.y*p.kinectHeight));
-						float dp = (float) Math.sqrt((fp.x*p.kinectWidth-eA.x*p.kinectWidth)
-								*(fp.x*p.kinectWidth-eA.x*p.kinectWidth) 
-								+(fp.y*p.kinectHeight-eA.y*p.kinectHeight)
-								*(fp.y*p.kinectHeight-eA.y*p.kinectHeight));
+						float dn = (float) Math.sqrt((fn.x*p.KINECT_WIDTH-eA.x*p.KINECT_WIDTH)
+								*(fn.x*p.KINECT_WIDTH-eA.x*p.KINECT_WIDTH) 
+								+(fn.y*p.KINECT_HEIGHT-eA.y*p.KINECT_HEIGHT)
+								*(fn.y*p.KINECT_HEIGHT-eA.y*p.KINECT_HEIGHT));
+						float dp = (float) Math.sqrt((fp.x*p.KINECT_WIDTH-eA.x*p.KINECT_WIDTH)
+								*(fp.x*p.KINECT_WIDTH-eA.x*p.KINECT_WIDTH) 
+								+(fp.y*p.KINECT_HEIGHT-eA.y*p.KINECT_HEIGHT)
+								*(fp.y*p.KINECT_HEIGHT-eA.y*p.KINECT_HEIGHT));
 						if (dn > 15 || dp > 15) {
 							if (contour.size() > 0) {
-								contour.add(new PVector(eB.x*p.kinectWidth, eB.y*p.kinectHeight));
+								contour.add(new PVector(eB.x*p.KINECT_WIDTH, eB.y*p.KINECT_HEIGHT));
 								contours.add(contour);
 								contour = new ArrayList<PVector>();
 							} else {
-								contour.add(new PVector(eA.x*p.kinectWidth, eA.y*p.kinectHeight));
+								contour.add(new PVector(eA.x*p.KINECT_WIDTH, eA.y*p.KINECT_HEIGHT));
 							}
 						} else {
-							contour.add(new PVector(eA.x*p.kinectWidth, eA.y*p.kinectHeight));
+							contour.add(new PVector(eA.x*p.KINECT_WIDTH, eA.y*p.KINECT_HEIGHT));
 						}
 					}
 				}
@@ -91,12 +95,12 @@ public class PolygonBlob extends Polygon2D {
 					ArrayList<PVector> c = contours.get(i);
 					PVector fp = c.get(0);
 					PVector lp = c.get(c.size()-1);
-					if (fp.y > p.kinectHeight-5 && fp.x < closestPoint.x) { 
+					if (fp.y > p.KINECT_HEIGHT-5 && fp.x < closestPoint.x) { 
 						closestPoint = fp; 
 						selectedContour = i; 
 						selectedPoint = 0;
 					}
-					if (lp.y > p.kinectHeight-5 && lp.x < closestPoint.y) { 
+					if (lp.y > p.KINECT_HEIGHT-5 && lp.x < closestPoint.y) { 
 						closestPoint = lp; 
 						selectedContour = i; 
 						selectedPoint = 1;
